@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {
-  RightSideBarType,
   useBuilderStateContext,
 } from '@/app/builder/builder-hooks';
 import {
@@ -30,6 +29,7 @@ import { TestActionComponent } from '../test-step/test-action';
 import { BranchSettings } from './branch-settings/branch-settings';
 import { CodeSettings } from './code-settings/code-settings';
 import { LoopsSettings } from './loops-settings';
+import { PieceSettings } from './piece-settings/piece-settings';
 
 const STEPS_WITH_ERROR_HANDLING: (ActionType | TriggerType)[] = [
   ActionType.CODE,
@@ -67,7 +67,7 @@ const StepSettingsContainer = React.memo(() => {
   }
 
   const { data: pieceMetadata } = piecesHooks.usePieceMetadata({
-    step: selectedStep,
+    step: selectedStep!,
   });
 
   const updateAction = (newAction: Action) => {
@@ -130,6 +130,16 @@ const StepSettingsContainer = React.memo(() => {
                   selectedStep={selectedStep}
                   onActionUpdate={debouncedActionWithSaving}
                 ></BranchSettings>
+              )}
+              {selectedStep.type === ActionType.PIECE && (
+                <PieceSettings
+                  step={selectedStep}
+                ></PieceSettings>
+              )}
+              {selectedStep.type === TriggerType.PIECE && (
+                <PieceSettings
+                  step={selectedStep}
+                ></PieceSettings>
               )}
               {STEPS_WITH_ERROR_HANDLING.includes(selectedStep.type) && (
                 <ActionErrorHandlingForm

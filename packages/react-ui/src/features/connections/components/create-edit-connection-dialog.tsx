@@ -28,6 +28,7 @@ import {
   CustomAuthProperty,
   OAuth2Property,
   OAuth2Props,
+  PieceMetadataModel,
   PieceMetadataModelSummary,
   PropertyType,
   SecretTextProperty,
@@ -48,10 +49,10 @@ import { OAuth2ConnectionSettings } from './oauth2-connection-settings';
 import { SecretTextConnectionSettings } from './secret-text-connection-settings';
 
 type ConnectionDialogProps = {
-  piece: PieceMetadataModelSummary;
+  piece: PieceMetadataModelSummary | PieceMetadataModel;
   connectionName?: string;
   open: boolean;
-  onConnectionCreated: () => void;
+  onConnectionCreated: (name: string) => void;
   setOpen: (open: boolean) => void;
 };
 
@@ -98,7 +99,8 @@ const CreateOrEditConnectionDialog = React.memo(
       },
       onSuccess: () => {
         setOpen(false);
-        onConnectionCreated();
+        const name = form.getValues().request.name;
+        onConnectionCreated(name);
         setErrorMessage('');
       },
       onError: (response) => {
@@ -205,7 +207,7 @@ CreateOrEditConnectionDialog.displayName = 'CreateOrEditConnectionDialog';
 export { CreateOrEditConnectionDialog };
 
 function createDefaultValues(
-  piece: PieceMetadataModelSummary,
+  piece: PieceMetadataModelSummary | PieceMetadataModel,
 ): Partial<UpsertAppConnectionRequestBody> {
   const suggestedConnectionName = appConnectionUtils.findName(piece.name);
   switch (piece.auth?.type) {
